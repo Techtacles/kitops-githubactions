@@ -14,7 +14,10 @@ permissions:
   actions: write
 
 env:
-  AWS_REGION: us-east-1
+  ARTIFACT_NAME: jozu-artifact
+  REPOSITORY_NAME: llama3-githubactions
+  TAG: latest
+  USERNAME: emmanueloffisongetim
 
 
 jobs:
@@ -42,13 +45,9 @@ jobs:
         id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
-            name: jozu-artifact
+            name: ${{env.ARTIFACT_NAME}}
             path: .
             overwrite: true
-
-
-    
-    
 
 
 
@@ -57,14 +56,40 @@ jobs:
     runs-on: ubuntu-latest
     needs: unpack-to-model
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - name: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+            name: ${{env.ARTIFACT_NAME}}
     
-      - name: list files
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: install kit
+        uses: jozu-ai/gh-kit-setup@v1.0.0
+
+      - name: login-to-jozuhub
         shell: bash
-        run: |
-            ls
-            cd models
-            ls
+        env: 
+            JOZU_EMAIL: ${{secrets.JOZU_EMAIL}}
+            JOZU_PASSWORD: ${{secrets.JOZU_PASSWORD}}
+        run: kit login jozu.ml -u $JOZU_EMAIL -p $JOZU_PASSWORD
+
+      - name: pack-modelkit
+        shell: bash
+        env:
+            REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
+            TAG: ${{env.TAG}}
+            USERNAME: ${{env.USERNAME}}
+        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:$TAG
+
+      - name: push-modelkit
+        shell: bash
+        env:
+            REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
+            TAG: ${{env.TAG}}
+            USERNAME: ${{env.USERNAME}}
+        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:$TAG
+
+
 
         
