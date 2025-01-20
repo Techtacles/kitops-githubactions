@@ -37,6 +37,14 @@ jobs:
       - name: unpack llama3 model to models folder
         shell: bash
         run: kit unpack jozu.ml/jozu/llama3-8b:8B-instruct-q5_0 --model -d models
+    
+      - name: upload-artifact
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+            name: jozu-artifact
+            path: .
+            overwrite: true
 
 
     
