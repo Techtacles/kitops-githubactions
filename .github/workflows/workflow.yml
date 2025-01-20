@@ -1,0 +1,62 @@
+name: Deploy LLAMA3 to Jozu Hub
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: write
+
+env:
+  AWS_REGION: us-east-1
+
+
+jobs:
+  unpack-to-model:
+    name: unpack-large-model
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: install kit
+        uses: jozu-ai/gh-kit-setup@v1.0.0
+
+      - name: kit version
+        shell: bash
+        run: |
+            kit version
+    
+      - name: unpack llama3 model to models folder
+        shell: bash
+        run: kit unpack jozu.ml/jozu/llama3-8b:8B-instruct-q5_0 --models -d models
+
+
+    
+    
+
+
+
+  push-to-jozuhub:
+    name: push-to-jozu
+    runs-on: ubuntu-latest
+    needs: unpack-to-model
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+    
+      - name: list files
+        shell: bash
+        run: |
+            ls
+            cd models
+            ls
+            
+        
