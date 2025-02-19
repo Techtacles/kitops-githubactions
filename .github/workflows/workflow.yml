@@ -16,7 +16,7 @@ permissions:
 env:
   ARTIFACT_NAME: jozu-artifact
   REPOSITORY_NAME: llama3-githubactions
-  TAG: latest
+  TAG: v2
   USERNAME: emmanueloffisongetim
 
 
