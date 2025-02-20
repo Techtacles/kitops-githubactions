@@ -16,7 +16,6 @@ permissions:
 env:
   ARTIFACT_NAME: jozu-artifact
   REPOSITORY_NAME: llama3-githubactions
-  TAG: v2
   USERNAME: emmanueloffisongetim
 
 
@@ -63,6 +62,9 @@ jobs:
     
       - name: Display structure of downloaded files
         run: ls -R
+      
+      - name: Set dynamic tag from SHA
+        run: echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: install kit
         uses: jozu-ai/gh-kit-setup@v1.0.0
@@ -78,18 +80,12 @@ jobs:
         shell: bash
         env:
             REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
-            TAG: ${{env.TAG}}
             USERNAME: ${{env.USERNAME}}
-        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:$TAG
+        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ env.TAG }}
 
       - name: push-modelkit
         shell: bash
         env:
             REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
-            TAG: ${{env.TAG}}
             USERNAME: ${{env.USERNAME}}
-        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:$TAG
-
-
-
-        
+        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ env.TAG }}
