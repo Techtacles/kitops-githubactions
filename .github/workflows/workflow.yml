@@ -72,17 +72,24 @@ jobs:
             JOZU_EMAIL: ${{secrets.JOZU_EMAIL}}
             JOZU_PASSWORD: ${{secrets.JOZU_PASSWORD}}
         run: kit login jozu.ml -u $JOZU_EMAIL -p $JOZU_PASSWORD
+      
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+  
 
       - name: pack-modelkit
         shell: bash
         env:
             REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
             USERNAME: ${{env.USERNAME}}
-        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ github.sha }}
+        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ env.COMMIT_SHORT_SHA }}
 
       - name: push-modelkit
         shell: bash
         env:
             REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
             USERNAME: ${{env.USERNAME}}
-        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ github.sha }}
+        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ env.COMMIT_SHORT_SHA }}
