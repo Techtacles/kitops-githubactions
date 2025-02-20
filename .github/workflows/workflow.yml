@@ -62,9 +62,6 @@ jobs:
     
       - name: Display structure of downloaded files
         run: ls -R
-      
-      - name: Set dynamic tag from SHA
-        run: echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: install kit
         uses: jozu-ai/gh-kit-setup@v1.0.0
@@ -81,11 +78,11 @@ jobs:
         env:
             REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
             USERNAME: ${{env.USERNAME}}
-        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ env.TAG }}
+        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ github.sha::7 }}
 
       - name: push-modelkit
         shell: bash
         env:
             REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
             USERNAME: ${{env.USERNAME}}
-        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ env.TAG }}
+        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ github.sha::7 }}
