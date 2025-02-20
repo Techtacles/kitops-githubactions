@@ -78,11 +78,11 @@ jobs:
         env:
             REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
             USERNAME: ${{env.USERNAME}}
-        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ github.sha::7 }}
+        run: kit pack . -t jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ github.sha }}
 
       - name: push-modelkit
         shell: bash
         env:
             REPOSITORY_NAME: ${{env.REPOSITORY_NAME}}
             USERNAME: ${{env.USERNAME}}
-        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ github.sha::7 }}
+        run: kit push jozu.ml/$USERNAME/$REPOSITORY_NAME:${{ github.sha }}
